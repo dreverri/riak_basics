@@ -1,3 +1,4 @@
+RIAK_PATH = File.dirname(__FILE__) + '/riak'
 CLUSTER_NAME = "my_cluster"
 RING_SIZE = 64 # Good for a six node cluster, I think
 COOKIE = "riak_demo_cookie"
@@ -96,6 +97,17 @@ eos
     cmd = "erl -noshell -name #{node1}_join@#{host1} -setcookie #{COOKIE} -eval \"net_adm:ping('#{name1}'), rpc:cast('#{name1}', riak_startup, join_cluster, ['#{name2}'])\" -run init stop"
     sh cmd
   end
+  
+  desc "Rejoin node (restore ringstate if it exists)"
+  task :rejoin, :node do |t, args|
+    unless args[:node]
+      abort "Please provide a node"
+    end
+    
+    name, node, host = /^(.+)@(.+)$/.match(args[:node]).to_a
+    cmd = "erl -noshell -name #{node}_rejoin@#{host} -setcookie #{COOKIE} -eval \"net_adm:ping('#{name}'), rpc:cast('#{name}', riak_startup, rejoin, [])\" -run init stop"
+    sh cmd
+  end
 end
 
 def write_config(name, port)
@@ -120,5 +132,5 @@ end
 
 def gen_cmd(name, flags="")
   path = "nodes/#{name}"
-  cmd = "cd #{path} && erl -connect_all false -pa ../../riak/deps/*/ebin -pa ../../riak/ebin -name #{name} -setcookie #{COOKIE} -run riak start config.erlenv #{flags}"
+  cmd = "cd #{path} && erl -connect_all false -pa #{RIAK_PATH}/deps/*/ebin -pa #{RIAK_PATH}/ebin -name #{name} -setcookie #{COOKIE} -run riak start config.erlenv #{flags}"
 end
