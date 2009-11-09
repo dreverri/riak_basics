@@ -49,11 +49,7 @@ Stopping node2:
 	rake riak:stop[node2@127.0.0.1]
 
 
-Starting node2:
+Starting node2 and restoring ringstate (rejoins cluster):
 
 	rake riak:start[node2@127.0.0.1]
-
-
-Restoring ringstate for node2 (rejoins cluster):
-
 	rake riak:rejoin[node2@127.0.0.1]
