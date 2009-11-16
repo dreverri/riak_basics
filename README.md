@@ -53,3 +53,13 @@ Starting node2 and restoring ringstate (rejoins cluster):
 
 	rake riak:start[node2@127.0.0.1]
 	rake riak:rejoin[node2@127.0.0.1]
+
+
+Running Cucumber tests:
+
+	# Clone or update riak
+	rake riak:clone
+	rake riak:compile
+	
+	cucumber features/
+
